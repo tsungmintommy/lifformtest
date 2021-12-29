@@ -1,88 +1,170 @@
+<!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>筋トレ管理</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
-</head>
-<body>
+   <head>
+      <title>Distance Matrix Service</title>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+      <!-- jsFiddle will insert css and js -->
+    </head>
+  <style>
+      /* Optional: Makes the sample page fill the window. */
+      html,
+      body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      }
 
-    <form class="w-75 mx-auto">
-        <p class="mt-3">名前</p>
-        <div>
-            <input class="form-control w-100 mt-1" name="name" placeholder="" required>
-        </div>
-        <p class="mt-3">腕立て</p>
-        <div>
-            <input class="form-control w-100 mt-1" name="udetate" required>
-        </div>
-        <p class="mt-3">腹筋</p>
-        <div>
-            <input class="form-control w-100 mt-1" name="fukkin" required>
-        </div>
-        <p class="mt-3">背筋</p>
-        <div>
-            <input class="form-control w-100 mt-1" name="haikin" required>
-        </div>
-        <p class="mt-3">スクワット</p>
-        <div>
-            <input class="form-control w-100 mt-1" name="sukuwat" required>
-        </div>
-        <input type="submit" class="mt-4 btn btn-primary" value="送信">
-    </form>
+      #container {
+      height: 100%;
+      display: flex;
+      }
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
+      #sidebar {
+      flex-basis: 15rem;
+      flex-grow: 1;
+      padding: 1rem;
+      max-width: 30rem;
+      height: 100%;
+      box-sizing: border-box;
+      overflow: auto;
+      }
 
-        $(document).ready(function () {
-            const liffId = "1656766863-o95r3dj1";
-            initializeLiff(liffId);
-        })
+      #map {
+      flex-basis: 0;
+      flex-grow: 4;
+      height: 100%;
+      }
 
-        function initializeLiff(liffId) {
-            liff.init({
-                liffId: liffId
-            }).then(() => {
-                initializeApp();
-            }).catch((err) => {
-                console.log('LIFF Initialization failed ', err);
+      #sidebar {
+      flex-direction: column;
+      }
+  </style>
+ <body>
+   <div id="container">
+      <div id="map"></div>
+      <div id="sidebar">
+        <h3 style="flex-grow: 0">Request</h3>
+        <pre style="flex-grow: 1" id="request"></pre>
+        <h3 style="flex-grow: 0">Response</h3>
+        <pre style="flex-grow: 1" id="response"></pre>
+      </div>
+    </div>
+
+   <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+   <script
+     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly&channel=2"
+     async
+   ></script>
+ </body>
+  <script>
+      function initMap() {
+         const bounds = new google.maps.LatLngBounds();
+         const markersArray = [];
+         const map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 55.53, lng: 9.4 },
+            zoom: 10,
+         });
+         // initialize services
+         const geocoder = new google.maps.Geocoder();
+         const service = new google.maps.DistanceMatrixService();
+         // build request
+         const origin1 = { lat: 25.018759, lng:121.564000}; //25.018759, 121.564000
+        
+         const destinationA = { lat: 25.021166, lng:121.554298}; //25.021166145625436, 121.5542989052452
+       
+         const request = {
+            origins: [origin1],
+            destinations: [destinationA],
+            travelMode: google.maps.TravelMode.DRIVING,
+            unitSystem: google.maps.UnitSystem.METRIC,
+            avoidHighways: false,
+            avoidTolls: false,
+         };
+            // Instantiate a directions service.
+         const directionsService = new google.maps.DirectionsService();
+            // Create a renderer for directions and bind it to the map.
+         const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+         // Instantiate an info window to hold step text.
+         const stepDisplay = new google.maps.InfoWindow();
+         
+         
+         // put request on page
+         document.getElementById("request").innerText = JSON.stringify(
+            request,
+            null,
+            2
+         );
+         // get distance matrix response
+         service.getDistanceMatrix(request).then((response) => {
+            // put response
+            document.getElementById("response").innerText = JSON.stringify(
+               response,
+               null,
+               2
+            );
+
+            // show on map
+            const originList = response.originAddresses;
+            const destinationList = response.destinationAddresses;
+
+            
+            calculateAndDisplayRoute(
+               directionsRenderer,
+               directionsService,
+               markersArray,
+               stepDisplay,
+               map,
+               originList[0],
+               destinationList[0]
+            );
+            
+         });
+         }
+         //刪除所有 Markers
+         function deleteMarkers(markersArray) {
+         for (let i = 0; i < markersArray.length; i++) {
+            markersArray[i].setMap(null);
+         }
+         markersArray = [];
+         }
+         //為每個 Marker 新增註解
+         function attachInstructionText(stepDisplay, marker, text, map) {
+         google.maps.event.addListener(marker, "click", () => {
+            // Open an info window when the marker is clicked on, containing the text
+            // of the step.
+            stepDisplay.setContent(text);
+            stepDisplay.open(map, marker);
+         });
+         }
+
+         function calculateAndDisplayRoute(
+         directionsRenderer,
+         directionsService,
+         markersArray,
+         stepDisplay,
+         map,
+         origins,
+         destinations
+         ) {
+         // First, remove any existing markers from the map.
+         deleteMarkers(markersArray);
+
+         // Retrieve the start and end locations and create a DirectionsRequest using
+         // WALKING directions.
+         directionsService
+            .route({
+               origin: origins,
+               destination: destinations,
+               travelMode: google.maps.TravelMode.WALKING,
+            })
+            .then((result) => {
+
+               directionsRenderer.setDirections(result);
+
+            })
+            .catch((e) => {
+               window.alert("Directions request failed due to " + e);
             });
-        }
-
-        function sendText(text) {
-            liff.sendMessages([{
-                'type': 'text',
-                'text': text
-            }]).then(function () {
-                liff.closeWindow();
-            }).catch(function (error) {
-                window.alert('Failed to send message ' + error);
-            });
-        }
-
-        const params = (new URL(document.location)).searchParams;
-        const key = params.get('key');
-
-        $(function () {
-            $('form').submit(function () {
-                const name    = $('input[name="name"]').val();
-                const udetate = $('input[name="udetate"]').val();
-                const fukkin  = $('input[name="fukkin"]').val();
-                const haikin  = $('input[name="haikin"]').val();
-                const sukuwat = $('input[name="sukuwat"]').val();
-                const msg = `${name}\n${udetate}\n${fukkin}\n${haikin}\n${sukuwat}`;
-                sendText(msg);
-                return false;
-            });
-        });
-
-    </script>
-
-</body>
+      }
+  </script>
 </html>
