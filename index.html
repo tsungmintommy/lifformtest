@@ -1,80 +1,328 @@
-<!DOCTYPE html>
+
 <html>
-   <head>
-      <title>Distance Matrix Service</title>
-      <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-      <!-- jsFiddle will insert css and js -->
+    <!-- head start -->
+    <head>
+        <meta charset='utf-8'>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>叫車服務</title>
+        <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css' rel='stylesheet'>
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >
+        <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+
+        <style>
+            body {
+                font-family: 'Lato', sans-serif
+            }
+            h1 {
+                margin-bottom: 10px
+            }
+            label {
+                color: #333
+            }
+            .btn-send {
+                font-weight: 300;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                width: 80%;
+                margin-left: 3px
+            }
+
+            .help-block.with-errors {
+                color: #ff5050;
+                margin-top: 5px
+            }
+
+            .card {
+                margin-left: 1px;
+                margin-right: 1px
+            }
+            
+        </style>
     </head>
-  <style>
-      /* Optional: Makes the sample page fill the window. */
-      html,
-      body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      }
+    <!-- head end -->
+    <!-- body start -->
+    <body>
+        <div class="container"> <!-- container start -->
+            <div class=" text-center mt-5 "><h1>叫車服務</h1></div> <!-- Title -->
+            <div class="row "> <!-- row start -->
+                <div class="col-lg-12 mx-auto"> <!-- layer 1 start -->
+                    <div class="card  mx-auto bg-light"> <!-- layer 2 start -->
+                        <div class="card-body bg-light"> <!-- layer 3 start -->
+                            <!-- container start -->
+                            <div class="container">
+                                <!-- form start -->
+                                <form id="contact-form" role="form">
+                                    <div class="controls"> <!-- controls start -->
+                                        <!-- 出發站 start -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group"> 
+                                                    <div class="row">
+                                                        <div class="col-7 " > <label for="form_name" >出發站(必填):</label> </div>
+                                                        <div class="col-5">
 
-      #container {
-      height: 100%;
-      display: flex;
-      }
+                                                            <i class="fa fa-map-marker"></i>
+                                                            <a href="https://www.mozilla.com/" style="font-size:10px;">選擇常用出發地址</a>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text" id="basic-addon1">
+                                                            <i class="fa fa-map-marker"></i>
+                                                        </span>
+                                                        
+                                                        <input id="autocomplete" placeholder="請輸入您所在位置地址"  type="text" class="form-control">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary btn-sm" type="button">加入常用地址</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div><!-- 出發站 end -->
+                                        <!-- 目的站 start -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group"> 
+                                                    <div class="row">
+                                                        <div class="col-7 " > <label for="form_name" >目的站(選項):</label> </div>
+                                                        <div class="col-5">
 
-      #sidebar {
-      flex-basis: 15rem;
-      flex-grow: 1;
-      padding: 1rem;
-      max-width: 30rem;
-      height: 100%;
-      box-sizing: border-box;
-      overflow: auto;
-      }
+                                                            <i class="fa fa-map-marker"></i>
+                                                            <a href="https://www.mozilla.com/" style="font-size:10px;">選擇常用目的地址</a>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text" id="basic-addon1">
+                                                            <i class="fa fa-map-marker"></i>
+                                                        </span>
+                                                    
+                                                        <input id="autocomplete2" placeholder="請輸入您所要前往的地址"  type="text" class="form-control">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary btn-sm" type="button" >加入常用地址</button>
+                                                        </div>
+                                                    </div>
+                                                
+                                                </div>
+                                            </div>
+                                        </div> <!-- 目的站 end -->
+                                        <!-- 叫車模式 start -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="card ">
+                                                    <div class="card-header">
+                                                        <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
+                                                            <!-- Credit card form tabs -->
+                                                            <ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
+                                                                <li class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active "> <i class="fa fa-car"></i> 即時叫車 </a> </li>
+                                                            
+                                                                <li class="nav-item"> <a data-toggle="pill" href="#net-banking" class="nav-link "> <i class="fa fa-clock-o"></i> 預約叫車 </a> </li>
+                                                            </ul>
+                                                        </div> <!-- End -->
+                                                        <!-- Credit card form content -->
+                                                        <div class="tab-content">
+                                                            <!-- credit card info-->
+                                                            <div id="credit-card" class="tab-pane fade show active pt-3">
+                                                                <!-- 顯示即時時間 -->
+                                                                <p class="text-muted" id="time">目前時間: 2021/12/30 11:23:13 </p>    
+                                                        </div> <!-- End -->
+                                                    
+                                                        <!-- bank transfer info -->
+                                                        <div id="net-banking" class="tab-pane fade pt-3">
+                                                            <div class="form-group "> <label for="Select Your Bank">
+                                                                    <h6>選擇預約時間</h6>
+                                                                </label> <select class="form-control" id="ccmonth">
+                                                                    <option value="" selected disabled>--請選擇預約幾分鐘--</option>
+                                                                    <option>10 分鐘</option>
+                                                                    <option>20 分鐘</option>
+                                                                    <option>30 分鐘</option>
+                                                                   
+                                                                </select> </div>
+                                                        
+                                                            <p class="text-muted">注意事項: 系統將以送出表單後開始計算預約時間. </p>
+                                                        </div> <!-- End -->
+                                                        <!-- End -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                    
+                                        </div>  <!-- 叫車模式 end -->
+                                    <!-- 備註留言 -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            
+                                                 <div class="form-group"> 
+                                                <label for="form_message">備註留言(選項) :</label> 
+                                                <textarea id="form_message" name="message" class="form-control" placeholder="可以寫需要司機注意什麼事項" rows="4" ></textarea> 
+                                            </div>
 
-      #map {
-      flex-basis: 0;
-      flex-grow: 4;
-      height: 100%;
-      }
+                                          
+                                           
+                                        </div>
+                                       
+                                    </div>
+                                    <!-- 確認叫車/代客叫車 -->
+                                    <div class="row">
+                                        <div class="col-md-12"> 
+                                            <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal">確認叫車</button>  
+                                        </div>
+                                        <div class="col-md-12"> 
+                                           <p> </p>
+                                        </div>
+                                        <div class="col-md-12"> 
+                                            <button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#myModal">代客叫車</button>  
+                                        </div>
+                                       
+                                    </div>
+                                </form>  <!-- form end -->
+                            </div> <!-- container end -->
+                        </div> <!-- layer 3 end -->
+                    </div> <!-- layer 1 end -->
+                </div> <!-- layer 2 end -->
+                <!--  Modal start -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">                     
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                               
+                                <div class="d-flex align-items-center">
+                                    <h5 class="modal-title">等候系統派單中 </h5>
+                              
+                                    <div class="spinner-grow spinner-grow-sm" role="status"></div>
+                                </div>
+                            <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                            </div>
+                          
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div id="map_canvas" style="width:auto; height: 250px;"></div>
+                                <p id="orderDetailInfo"></p>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消叫車</button>
+                            </div>                          
+                        </div>
+                    </div>              
+                </div> <!--  Modal end -->
+            </div> <!--  row end -->
+        </div> <!-- container end -->
+    </body>
+    <!-- body end -->
+    <!-- javascript start -->
+    <!-- about map autocomplete function -->
+    <script>
+        var placeSearch, autocomplete;
+        var componentForm = {
+            street_number: 'short_name',
+            route: 'long_name',
+            locality: 'long_name',
+            administrative_area_level_1: 'short_name',
+            country: 'long_name',
+            postal_code: 'short_name'
+        };
 
-      #sidebar {
-      flex-direction: column;
-      }
-  </style>
- <body>
-   <div id="container">
-      <div id="map"></div>
-      <div id="sidebar">
-        <h3 style="flex-grow: 0">Request</h3>
-        <pre style="flex-grow: 1" id="request"></pre>
-        <h3 style="flex-grow: 0">Response</h3>
-        <pre style="flex-grow: 1" id="response"></pre>
-      </div>
-    </div>
+        function initAutocomplete() {
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete = new google.maps.places.Autocomplete(
+                /** @type {!HTMLInputElement} */(document.getElementById('autocomplete'))
+                );
 
-   <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-   <script
-     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvTOg1T0V6K_ifNt1u3vMF9Pc&callback=initMap&v=weekly&channel=2"
-     async
-   ></script>
- </body>
-  <script>
-      function initMap() {
+            // When the user selects an address from the dropdown, populate the address
+            // fields in the form.
+            autocomplete.addListener('place_changed', fillInAddress);
+
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete2 = new google.maps.places.Autocomplete(
+                /** @type {!HTMLInputElement} */(document.getElementById('autocomplete2'))
+               );
+
+            // When the user selects an address from the dropdown, populate the address
+            // fields in the form.
+            autocomplete2.addListener('place_changed', fillInAddress);
+        }
+
+        function fillInAddress() {
+            // Get the place details from the autocomplete object.
+            var place = autocomplete.getPlace();
+
+            for (var component in componentForm) {
+                //document.getElementById(component).value = '';
+                //document.getElementById(component).disabled = false;
+            }
+
+            // Get each component of the address from the place details
+            // and fill the corresponding field on the form.
+            for (var i = 0; i < place.address_components.length; i++) {
+            var addressType = place.address_components[i].types[0];
+            if (componentForm[addressType]) {
+                var val = place.address_components[i][componentForm[addressType]];
+               // document.getElementById(addressType).value = val;
+            }
+            }
+        }
+    </script>
+    <!-- about get now data function-->
+    <script>
+        function checkTime(i) {
+            if (i < 10) {
+                i = "0" + i;
+        }
+            return i;
+        }
+
+        function startTime() {
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            // add a zero in front of numbers<10
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('time').innerHTML ="目前時間:" + today.getFullYear()+ "年" + (today.getMonth()+1) + "月" + today.getDate() + "日 "+ h + ":" + m + ":" + s;
+            t = setTimeout(function() {startTime()}, 500);
+        }
+        startTime();
+    </script>
+    <!-- about bootstrap -->
+    <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.bundle.min.js'></script>
+    <!-- about map api and autocomplete -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvTOg1T0PAfQGsQZV6K_ifNt1u3vMF9Pc&v=weekly&channel=2&libraries=places&callback=initAutocomplete"></script>
+    <!-- about map distance and duration function -->
+    <script type="text/javascript">
+        function initMap(origin,destination) {
          const bounds = new google.maps.LatLngBounds();
          const markersArray = [];
-         const map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: 55.53, lng: 9.4 },
+         const map = new google.maps.Map(document.getElementById("map_canvas"), {
+            //center: { lat: 55.53, lng: 9.4 },
+            disableDefaultUI: false,
+            zoomControl: false,
+            mapTypeControl: false,
+            scaleControl: false,
+            streetViewControl: false,
+            rotateControl: false,
+            fullscreenControl:false,
             zoom: 10,
          });
          // initialize services
          const geocoder = new google.maps.Geocoder();
          const service = new google.maps.DistanceMatrixService();
          // build request
-         const origin1 = { lat: 25.018759, lng:121.564000}; //25.018759, 121.564000
+         //const origin1 = "110台灣台北市信義區崇德街297號";//{ lat: 25.018759, lng:121.564000}; //25.018759, 121.564000
         
-         const destinationA = { lat: 25.021166, lng:121.554298}; //25.021166145625436, 121.5542989052452
+         //const destinationA = "106台灣台北市大安區安居街8巷6弄18號"//{ lat: 25.021166, lng:121.554298}; //25.021166145625436, 121.5542989052452
        
          const request = {
-            origins: [origin1],
-            destinations: [destinationA],
+            origins: [origin],
+            destinations: [destination],
             travelMode: google.maps.TravelMode.DRIVING,
             unitSystem: google.maps.UnitSystem.METRIC,
             avoidHighways: false,
@@ -88,20 +336,70 @@
          const stepDisplay = new google.maps.InfoWindow();
          
          
-         // put request on page
-         document.getElementById("request").innerText = JSON.stringify(
-            request,
-            null,
-            2
-         );
+        
          // get distance matrix response
          service.getDistanceMatrix(request).then((response) => {
-            // put response
-            document.getElementById("response").innerText = JSON.stringify(
-               response,
-               null,
-               2
-            );
+            var ResponseResultJson = JSON.stringify(response,null,2);
+            // Converting JSON-encoded string to JS object
+            var obj = JSON.parse(ResponseResultJson);
+            console.log(obj["rows"][0]["elements"][0]["distance"]["text"]);
+            console.log(obj["rows"][0]["elements"][0]["duration"]["text"]);
+            console.log(obj["originAddresses"][0]);
+            console.log(obj["destinationAddresses"][0]);
+
+
+            const val3 = $('.nav .active').text().trim();
+            console.log(val3);
+            str = null;
+            if(val3=="即時叫車")
+                str=document.getElementById("time").innerHTML.replace("目前時間:","");
+            else
+                str =  document.getElementById("ccmonth").value;
+            console.log(str);
+           
+
+            document.getElementById("orderDetailInfo").innerHTML = 
+         
+            "<table class='table'>"+
+            "<tbody>"+
+            "<tr><td>出發站</td><td>"+obj["originAddresses"][0]+"</td></tr>"+
+            "<tr><td>目的站</td><td>"+obj["destinationAddresses"][0]+"</td></tr>"+
+            "<tr><td>預估車程距離</td><td>"+obj["rows"][0]["elements"][0]["distance"]["text"]+"</td></tr>"+
+            "<tr><td>預計車程時間</td><td>"+obj["rows"][0]["elements"][0]["duration"]["text"]+"</td></tr>"+
+            "<tr><td>備註留言</td><td>"+document.getElementById("form_message").value+"</td></tr>"+
+            "<tr><td>叫車模式</td><td>"+val3+" "+str+"</td></tr>"+"</tbody>"+"</table>";
+            
+
+
+            /*
+            obj["rows"][0][0][]
+            {
+                "rows":[
+                    {
+                        "elements":[
+                            {
+                            "distance":{
+                                "text":"2.1 公里",
+                                "value":2076
+                            },
+                            "duration":{
+                                "text":"8 分鐘",
+                                "value":452
+                            },
+                            "status":"OK"
+                            }
+                        ]
+                    }
+                ],
+                "originAddresses":[
+                    "110台灣台北市信義區崇德街297號"
+                ],
+                "destinationAddresses":[
+                    "106台灣台北市大安區安居街8巷6弄18號"
+                ]   
+            }
+            */
+          
 
             // show on map
             const originList = response.originAddresses;
@@ -165,6 +463,20 @@
             .catch((e) => {
                window.alert("Directions request failed due to " + e);
             });
-      }
-  </script>
+        }
+    
+        //show map on modal
+        $('#myModal').on('shown.bs.modal', function () {
+            const val = document.getElementById('autocomplete').value;
+            const val2 = document.getElementById('autocomplete2').value;
+            console.log(val);
+            console.log(val2);
+           
+           
+            initMap(val,val2);
+        });
+    
+    </script>
+   
+    <!-- javascript end -->
 </html>
