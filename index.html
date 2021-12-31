@@ -4,7 +4,7 @@
     <head>
         <meta charset='utf-8'>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>叫車服務 test</title>
+        <title>叫車服務</title>
         <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css' rel='stylesheet'>
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >
         <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
@@ -43,7 +43,7 @@
             .btn-lg-block
             */
 
-            @media (max-width: 767px) {
+            @media (max-width: 480px) {
                 .btn-xs-block {
                     display: flex;
                     width: 100%;
@@ -62,6 +62,23 @@
                 .btn-block+.btn-xs-block,
                 .btn-xs-block+.btn-block,
                 .btn-xs-block+.btn-xs-block {
+                    margin-top: 0.5rem;
+                }
+            }
+
+            @media (min-width: 479px) and (max-width: 767px) {
+                .btn-sm-block {
+                    display: flex;
+                    width: 100%;
+                }
+                input[type="submit"].btn-sm-block,
+                input[type="reset"].btn-sm-block,
+                input[type="button"].btn-sm-block {
+                    width: 100%;
+                }
+                .btn-block+.btn-sm-block,
+                .btn-sm-block+.btn-block,
+                .btn-sm-block+.btn-sm-block {
                     margin-top: 0.5rem;
                 }
             }
