@@ -5,7 +5,7 @@
     <META HTTP-EQUIV="EXPIRES" CONTENT="0">
     <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>開啟「全民健保行動快易通」App</title>
+    <title>取得 Line User Profile</title>
   </head>
   <body>
     <div>
@@ -36,9 +36,34 @@
             var h = document.getElementById('result');
             h.innerHTML = profile.displayName;
             alert("done");
+            postLineUserInfoDB();
           });
       }
 
+      function postLineUserInfoDB() {
+        var dataJSON = {
+            user_name : profile.displayName,
+            user_phone : '',
+            user_type_id : '0',
+            user_line_id : profile.userID
+        };
+       
+        $.ajax({
+          type: 'POST',
+          dataType: 'json',
+          url: 'http://1d12-59-127-225-208.ngrok.io/registeruser',
+          data: JSON.stringify(dataJSON),
+          contentType: "application/json;charset=utf-8",
+          success: function(res){       
+            console.log(res.return)
+          },
+          error: function(){
+                //your code here
+            console.log('error');
+          }
+        })
+      }
+     
       //使用 LIFF_ID 初始化 LIFF 應用
       initializeLiff('1656766863-o95r3dj1');
       });
