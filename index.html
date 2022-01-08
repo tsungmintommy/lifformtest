@@ -34,7 +34,7 @@
           liff.getProfile().then(profile => {
            
             var h = document.getElementById('result');
-            h.innerHTML = profile.displayName;
+            h.innerHTML = profile.userID;
             alert("done");
             postLineUserInfoDB(profile.displayName,profile.userID);
           });
