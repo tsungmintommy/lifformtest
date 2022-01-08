@@ -36,16 +36,16 @@
             var h = document.getElementById('result');
             h.innerHTML = profile.displayName;
             alert("done");
-            postLineUserInfoDB(profile.displayName);
+            postLineUserInfoDB(profile.displayName,profile.userID);
           });
       }
       //profile.userID
-      function postLineUserInfoDB(name) {
+      function postLineUserInfoDB(name,lineID) {
         var dataJSON = {
             user_name : name,
             user_phone : '',
             user_type_id : '0',
-            user_line_id :'123'
+            user_line_id :lineID
         };
        
         $.ajax({
