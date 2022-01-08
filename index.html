@@ -42,10 +42,10 @@
       //profile.userID
       function postLineUserInfoDB() {
         var dataJSON = {
-            user_name : 'trs',
+            user_name : profile.displayName,
             user_phone : '',
             user_type_id : '0',
-            user_line_id : 'test'
+            user_line_id : profile.userID
         };
        
         $.ajax({
@@ -54,7 +54,6 @@
           url: 'https://c41c-59-127-225-208.ngrok.io/registeruser',
           data: JSON.stringify(dataJSON),
           contentType: "application/json;charset=utf-8",
-       
           success: function(res){       
             console.log(res.return)
           },
@@ -64,9 +63,9 @@
           }
         })
       }
-      postLineUserInfoDB();
+     
       //使用 LIFF_ID 初始化 LIFF 應用
-      //initializeLiff('1656766863-o95r3dj1');
+      initializeLiff('1656766863-o95r3dj1');
       });
     </script>
   </body>
