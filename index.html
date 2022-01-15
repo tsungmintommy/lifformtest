@@ -1,72 +1,959 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-    <META HTTP-EQUIV="EXPIRES" CONTENT="0">
-    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>取得 Line User Profile</title>
-  </head>
-  <body>
-    <div>
-      <div id="result"></div>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
-      $(document).ready(function() {
-        function initializeLiff(myLiffId) {
-          liff
-              .init({
-                  liffId: myLiffId
-              })
-              .then(() => {
-                  initializeApp();
-              })
-              .catch((err) => {
-                  alert('啟動失敗。');
-              });
-      }
 
-      function initializeApp() {
-          /*var h = document.getElementById('result');
-          h.innerHTML = 'Hello!!';*/
-          liff.getProfile().then(profile => {
-           
-            var h = document.getElementById('result');
-            h.innerHTML = profile.userId;
-            alert("done");
-            postLineUserInfoDB(profile.displayName,profile.userId);
-          });
-      }
-      //profile.userID
-      function postLineUserInfoDB(name,lineID) {
-        var dataJSON = {
-            user_name : name,
-            user_phone : '',
-            user_type_id : '0',
-            user_line_id :lineID
-        };
+<html>
+    <!-- head start -->
+    <head>
+        <meta charset='utf-8'>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>叫車服務</title>
+        <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css' rel='stylesheet'>
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >
        
-        $.ajax({
-          type: 'POST',
-          dataType: 'json',
-          url: 'https://c41c-59-127-225-208.ngrok.io/registeruser',
-          data: JSON.stringify(dataJSON),
-          contentType: "application/json;charset=utf-8",
-          success: function(res){       
-            console.log(res.return)
-          },
-          error: function(){
-                //your code here
-            console.log('error');
-          }
-        })
-      }
-     
-      //使用 LIFF_ID 初始化 LIFF 應用
-      initializeLiff('1656766863-o95r3dj1');
-      });
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" rel="stylesheet"  />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+        <script>
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "3000",          
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+        </script>
+        <style>
+            body {
+                font-family: 'Lato', sans-serif
+            }
+            h1 {
+                margin-bottom: 10px
+            }
+            label {
+                color: #333
+            }
+            .btn-send {
+                font-weight: 300;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                width: 80%;
+                margin-left: 3px
+            }
+
+            .help-block.with-errors {
+                color: #ff5050;
+                margin-top: 5px
+            }
+
+            .card {
+                margin-left: 1px;
+                margin-right: 1px
+            }
+            /* Blocks Mobile Screen Size buttons
+            .btn-xs-block
+            .btn-sm-block
+            .btn-md-block
+            .btn-lg-block
+            */
+
+            @media (max-width: 480px) {
+                .btn-xs-block {
+                    display: flex;
+                    width: 100%;
+                }
+                /*
+                    Extra config:
+                    .btn-xs-block .btn {
+                        flex-grow: 1;
+                    }
+                */
+                input[type="submit"].btn-xs-block,
+                input[type="reset"].btn-xs-block,
+                input[type="button"].btn-xs-block {
+                    width: 100%;
+                }
+                .btn-block+.btn-xs-block,
+                .btn-xs-block+.btn-block,
+                .btn-xs-block+.btn-xs-block {
+                    margin-top: 0.5rem;
+                }
+            }
+
+            @media (min-width: 479px) and (max-width: 767px) {
+                .btn-sm-block {
+                    display: flex;
+                    width: 100%;
+                }
+                input[type="submit"].btn-sm-block,
+                input[type="reset"].btn-sm-block,
+                input[type="button"].btn-sm-block {
+                    width: 100%;
+                }
+                .btn-block+.btn-sm-block,
+                .btn-sm-block+.btn-block,
+                .btn-sm-block+.btn-sm-block {
+                    margin-top: 0.5rem;
+                }
+            }
+
+            @media (min-width: 768px) and (max-width: 991px) {
+                .btn-sm-block {
+                    display: flex;
+                    width: 100%;
+                }
+                input[type="submit"].btn-sm-block,
+                input[type="reset"].btn-sm-block,
+                input[type="button"].btn-sm-block {
+                    width: 100%;
+                }
+                .btn-block+.btn-sm-block,
+                .btn-sm-block+.btn-block,
+                .btn-sm-block+.btn-sm-block {
+                    margin-top: 0.5rem;
+                }
+            }
+
+            @media (min-width: 992px) and (max-width: 1199px) {
+                .btn-md-block {
+                    display: flex;
+                    width: 100%;
+                }
+                input[type="submit"].btn-md-block,
+                input[type="reset"].btn-md-block,
+                input[type="button"].btn-md-block {
+                    width: 100%;
+                }
+                .btn-block+.btn-md-block,
+                .btn-md-block+.btn-block,
+                .btn-md-block+.btn-md-block {
+                    margin-top: 0.5rem;
+                }
+            }
+
+            @media (min-width: 1200px) {
+                .btn-lg-block {
+                    display: flex;
+                    width: 100%;
+                }
+                input[type="submit"].btn-lg-block,
+                input[type="reset"].btn-lg-block,
+                input[type="button"].btn-lg-block {
+                    width: 100%;
+                }
+                .btn-block+.btn-lg-block,
+                .btn-lg-block+.btn-block,
+                .btn-lg-block+.btn-lg-block {
+                    margin-top: 0.5rem;
+                }
+            }
+            
+        </style>
+    </head>
+    <!-- head end -->
+    <!-- body start -->
+    <body>
+        <div class="container"> <!-- container start -->
+          
+            <div class=" text-center mt-5 "><h1>叫車服務</h1></div> <!-- Title -->
+            <div class="row "> <!-- row start -->
+                <div class="col-lg-12 mx-auto"> <!-- layer 1 start -->
+                    <div class="card  mx-auto bg-light"> <!-- layer 2 start -->
+                        <div class="card-body bg-light"> <!-- layer 3 start -->
+                            <!-- container start -->
+                            <div class="container">
+                                <!-- form start -->
+                                <form id="contact-form" role="form">
+                                    <div class="controls"> <!-- controls start -->
+                                        <!-- 出發站 start -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group"> 
+                                                    <div class="row">
+                                                        <div class="col-7 " > <label for="form_name" >出發站(必填):</label> </div>
+                                                        <div class="col-5">
+
+                                                            <i class="fa fa-map-marker"></i>
+                                                            <a type="button" style="font-size:10px;"  onclick="selectCommonAdress('0')">選擇常用出發地址</a>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text" id="basic-addon1">
+                                                            <i class="fa fa-map-marker"></i>
+                                                        </span>
+                                                        
+                                                        <input id="autocomplete" placeholder="請輸入您所在位置地址"  type="text" class="form-control">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary btn-sm" type="button"  onclick="addCommonAdress('0')">加入常用地址</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div><!-- 出發站 end -->
+                                        <!-- 目的站 start -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group"> 
+                                                    <div class="row">
+                                                        <div class="col-7 " > <label for="form_name" >目的站(選項):</label> </div>
+                                                        <div class="col-5">
+
+                                                            <i class="fa fa-map-marker"></i>
+                                                            <a  type="button" style="font-size:10px;" id="selectCommonToAdress" onclick="selectCommonAdress('1')">選擇常用目的地址</a>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text" id="basic-addon1">
+                                                            <i class="fa fa-map-marker"></i>
+                                                        </span>
+                                                    
+                                                        <input id="autocomplete2" placeholder="請輸入您所要前往的地址"  type="text" class="form-control">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="addCommonAdress('1')">加入常用地址</button>
+                                                        </div>
+                                                    </div>
+                                                
+                                                </div>
+                                            </div>
+                                        </div> <!-- 目的站 end -->
+                                        <!-- 叫車模式 start -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="card ">
+                                                    <div class="card-header">
+                                                        <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
+                                                            <!-- Credit card form tabs -->
+                                                            <ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
+                                                                <li class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active "> <i class="fa fa-car"></i> 即時叫車 </a> </li>
+                                                            
+                                                                <li class="nav-item"> <a data-toggle="pill" href="#net-banking" class="nav-link "> <i class="fa fa-clock-o"></i> 預約叫車 </a> </li>
+                                                            </ul>
+                                                        </div> <!-- End -->
+                                                        <!-- Credit card form content -->
+                                                        <div class="tab-content">
+                                                            <!-- credit card info-->
+                                                            <div id="credit-card" class="tab-pane fade show active pt-3">
+                                                                <!-- 顯示即時時間 -->
+                                                                <p class="text-muted" id="time">目前時間: 2021/12/30 11:23:13 </p>    
+                                                        </div> <!-- End -->
+                                                    
+                                                        <!-- bank transfer info -->
+                                                        <div id="net-banking" class="tab-pane fade pt-3">
+                                                            <div class="form-group "> <label for="Select Your Bank">
+                                                                    <h6>選擇預約時間</h6>
+                                                                </label> <select class="form-control" id="ccmonth">
+                                                                    <option value="" selected disabled>--請選擇預約幾分鐘--</option>
+                                                                    <option>預約 10 分鐘</option>
+                                                                    <option>預約 20 分鐘</option>
+                                                                    <option>預約 30 分鐘</option>
+                                                                   
+                                                                </select> </div>
+                                                        
+                                                            <p class="text-muted">注意事項: 系統將以送出表單後開始計算預約時間. </p>
+                                                        </div> <!-- End -->
+                                                        <!-- End -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                    
+                                        </div>  <!-- 叫車模式 end -->
+                                    <!-- 備註留言 -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            
+                                                 <div class="form-group"> 
+                                                <label for="form_message">備註留言(選項) :</label> 
+                                                <textarea id="form_message" name="message" class="form-control" placeholder="可以寫需要司機注意什麼事項" rows="4" ></textarea> 
+                                            </div>
+
+                                          
+                                           
+                                        </div>
+                                       
+                                    </div>
+                                    <!-- 確認叫車/代客叫車 data-toggle="modal" data-target="#myModal"-->
+                                    <div class="row">
+                                        <div class="col-md-12"> 
+                                            <button type="button" class="btn btn-success btn-block" onclick="submitCallCarServiceData()">確認叫車</button>  
+                                        </div>
+                                        <div class="col-md-12"> 
+                                           <p> </p>
+                                        </div>
+                                        <div class="col-md-12"> 
+                                            <button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#myModal">代客叫車</button>  
+                                        </div>
+                                       
+                                    </div>
+                                </form>  <!-- form end -->
+                            </div> <!-- container end -->
+                        </div> <!-- layer 3 end -->
+                    </div> <!-- layer 1 end -->
+                </div> <!-- layer 2 end -->
+                <!--  Modal start -->
+                <div class="modal fade" id="carPairingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">                     
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                               
+                                <div class="d-flex align-items-center">
+                                    <h5 class="modal-title">等候系統派單中 </h5>
+                              
+                                    <div class="spinner-grow spinner-grow-sm" role="status"></div>
+                                </div>
+                            <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                            </div>
+                          
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div id="map_canvas" style="width:auto; height: 250px;"></div>
+                                <p id="orderDetailInfo"></p>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelCar">取消叫車</button>
+                            </div>                          
+                        </div>
+                    </div>              
+                </div> <!--  Modal end -->
+               
+            </div> <!--  row end -->
+        </div> <!-- container end -->
+
+        
+    </body>
+    <!-- body end -->
+    <!-- javascript start -->
+    <!-- about map autocomplete function -->
+    <script>
+        var placeSearch, autocomplete;
+        var componentForm = {
+            street_number: 'short_name',
+            route: 'long_name',
+            locality: 'long_name',
+            administrative_area_level_1: 'short_name',
+            country: 'long_name',
+            postal_code: 'short_name'
+        };
+
+        function initAutocomplete() {
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete = new google.maps.places.Autocomplete(
+                /** @type {!HTMLInputElement} */(document.getElementById('autocomplete'))
+                );
+
+            // When the user selects an address from the dropdown, populate the address
+            // fields in the form.
+            autocomplete.addListener('place_changed', fillInAddress);
+
+            // Create the autocomplete object, restricting the search to geographical
+            // location types.
+            autocomplete2 = new google.maps.places.Autocomplete(
+                /** @type {!HTMLInputElement} */(document.getElementById('autocomplete2'))
+               );
+
+            // When the user selects an address from the dropdown, populate the address
+            // fields in the form.
+            autocomplete2.addListener('place_changed', fillInAddress);
+        }
+
+        function fillInAddress() {
+            // Get the place details from the autocomplete object.
+            var place = autocomplete.getPlace();
+
+            for (var component in componentForm) {
+                //document.getElementById(component).value = '';
+                //document.getElementById(component).disabled = false;
+            }
+
+            // Get each component of the address from the place details
+            // and fill the corresponding field on the form.
+            for (var i = 0; i < place.address_components.length; i++) {
+                var addressType = place.address_components[i].types[0];
+                if (componentForm[addressType]) {
+                    var val = place.address_components[i][componentForm[addressType]];
+                // document.getElementById(addressType).value = val;
+                }
+            }
+        }
     </script>
-  </body>
+    <!-- about get now data function-->
+    <script>
+        function checkTime(i) {
+            if (i < 10) {
+                i = "0" + i;
+        }
+            return i;
+        }
+
+        function startTime() {
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            // add a zero in front of numbers<10
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+            t = setTimeout(function() {startTime()}, 500);
+        }
+        startTime();
+    </script>
+    <!-- about bootstrap -->
+    <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.bundle.min.js'></script>
+    <!-- about map api and autocomplete -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvTOg1T0PAfQGsQZV6K_ifNt1u3vMF9Pc&v=weekly&channel=2&libraries=places&callback=initAutocomplete"></script>
+   
+    
+  
+    <script>
+        /*
+         動態創建 Modal 內容
+         */
+
+        function selectCommonAdress(select) {
+            showModal(event.target.innerHTML,select, () => {console.log('File deleted successfully');});
+        }
+
+        var modalWrap = null;
+       
+        const showModal = (btnValue,select, callback) => {
+           
+
+            if (modalWrap !== null) {
+                modalWrap.remove();
+            }
+
+       
+            
+            var dataJSON = {
+                user_line_id : 'Ue8d29d258a3250cdcac045c1094fd478',
+                address_type : select
+            };
+            
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: 'http://127.0.0.1:5000/getCommonAddress',
+                data: JSON.stringify(dataJSON),
+                contentType: "application/json;charset=utf-8",
+                success: function(res){ 
+                    var addressArray = [];
+                    for (let i = 0; i < res.length; i++) {
+                        for (let j = 0; j < res[i].length; j++) {
+                            addressArray.push[res[i][j]];
+                        }
+                    }
+                    createModelElement(res,btnValue,select)
+                },
+                error: function(){
+                        //your code here
+                    console.log('error');
+                }
+            })
+        }
+     
+        function selectAddressItem(e,select) {  
+            if(select == 0) {
+                document.getElementById("autocomplete").value = event.target.innerHTML;
+            } else{
+                document.getElementById("autocomplete2").value = event.target.innerHTML;
+            }
+        }
+
+        function createModelElement(res,title,select) {
+            modalWrap = document.createElement('div');
+            //modalWrap.innerHTML = 
+            var htmlcontext = 
+        
+            `<div class="modal fade" id="selectCommonToAdaress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                        
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">                     
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <div class="d-flex align-items-center">
+                            <h5 class="modal-title">${title}</h5>
+                        </div>
+                    </div>
+                
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                    
+                        <div class="list-group" id="commonFormAdaressList">`;
+                        for (let i = 0; i < res.length; i++) {
+                                for (let j = 0; j < res[i].length; j++) {
+                                    //console.log(res[i][j]);
+                                    htmlcontext+= `<button type="button" class="list-group-item list-group-item-action" onclick="selectAddressItem(this.innerHTML,${select})" data-dismiss="modal">${res[i][j]}</button>`;
+                                }
+                        }
+
+                    htmlcontext+=`</div></div>
+                                
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉返回</button>
+                                </div>                         
+                            </div>
+                        </div>              
+                    </div> `;
+            modalWrap.innerHTML = htmlcontext;
+        
+            document.body.append(modalWrap);
+            var modal = new bootstrap.Modal(modalWrap.querySelector('.modal'));
+            modal.show();
+        }
+       
+    </script>
+
+    <script>
+        function addCommonAdress(select,inputToAdress){
+          // get input to Address value 
+        var inputToAdress = null;
+        if(select == 0) {
+            inputToAdress =  document.getElementById('autocomplete').value;
+        }
+        else{
+            inputToAdress =  document.getElementById('autocomplete2').value;
+        }
+       
+          console.log(inputToAdress);
+          // address convert tp latlan
+          convertAdressToLatLan(inputToAdress, function(locationData) {
+
+            if(locationData["lat"] == 0 && locationData["lng"] == 0){
+                toastr['warning']('地址輸入錯誤', '失敗');
+                document.getElementById("autocomplete").value = "";
+            }
+            else {
+                 // create post json data
+                var dataJSON = {
+                        common_address : inputToAdress,
+                        user_line_id : 'Ue8d29d258a3250cdcac045c1094fd478',
+                        address_location_latitude :locationData["lat"],
+                        address_location_longitude :locationData["lng"],
+                        address_type : select
+                    };
+                console.log(dataJSON);
+                // post add common address to db
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: 'http://127.0.0.1:5000/addCommonAddress',
+                    data: JSON.stringify(dataJSON),
+                    contentType: "application/json;charset=utf-8",
+                    success: function(res){ 
+                        console.log('success '+res['return']);
+                        if(res['return']=="repeat data") {
+                            toastr['warning']('該地址已記錄', '失敗');
+                        } else {
+                            toastr['success']('已成功新增', '成功');
+                        }
+                        
+                    },
+                    error: function(){ 
+                        console.log('error');
+                    }
+                })
+            }
+           
+          });    
+        };
+    </script>
+  
+    <script>
+        // 地址轉換成經緯度
+        function convertAdressToLatLan(address, callback) {
+            geocoder = new google.maps.Geocoder();
+            if( geocoder ) {
+                geocoder.geocode({ 'address': address }, function (results, status) {
+                    if( status == google.maps.GeocoderStatus.OK ) {
+                        callback({lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()});
+                    }
+                    else {
+                        callback({lat: 0, lng: 0});
+                    }
+                });
+            }
+        }
+    </script>
+    <script>
+        // 叫車服務申請
+        function submitCallCarServiceData(){   
+            var userToAdress = document.getElementById("autocomplete").value;
+            //通過所有檢查之後，就可以開始配對司機
+            if(checkCallCarServiceData(userToAdress) &&  isSelectItem()) {
+                var modal = new bootstrap.Modal(document.querySelector('#carPairingModal'));
+                modal.show();
+               
+            }
+           //跳出 model
+        }
+    </script>
+    <script>
+        // 檢查叫車服務，是否都有填寫
+        function checkCallCarServiceData(userToAdress){     
+            //如果沒有填寫出發地
+            if(userToAdress == ""){
+                toastr['warning']('出發站尚未填寫', '失敗');
+                return false;
+            } 
+            //如果有填寫出發地
+            else {
+                return true;
+            }
+        }
+    </script>
+    <script>
+        // 代客服務，直接洽詢後台
+    </script>
+    <script>
+        //訂單輪迴詢問
+        function check_order() {
+             // create post json data
+            var dataJSON = {         
+                passing_id : 'Ue8d29d258a3250cdcac045c1094fd478',
+            };
+            console.log(dataJSON);
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: 'http://127.0.0.1:5000/getPairCallCar',
+                data: JSON.stringify(dataJSON),
+                contentType: "application/json;charset=utf-8",
+                success: function(res){ 
+                       
+                        console.log('time_gap '+res['time_gap']);
+                        if(parseInt(res['time_gap'])>2){
+                            console.log('已超過2分鐘以上..');
+                            clearInterval(this);
+                        }
+                    },
+                    error: function(){ 
+                        console.log('error');
+                    }
+            })
+        }
+        //假設查詢到該使用者有臨時建立表格，則開始計算，若N秒後，無回應則取消表單
+       
+    </script>
+     <script>
+        function calcDistance(origin,destination,ref_Callback_calcDistance){
+
+            console.log("出發地點 :"+origin+" 目的地點"+destination);
+
+
+            const bounds = new google.maps.LatLngBounds();
+            const markersArray = [];
+            const map = new google.maps.Map(document.getElementById("map_canvas"), {
+                //center: { lat: 55.53, lng: 9.4 },
+                disableDefaultUI: false,
+                zoomControl: false,
+                mapTypeControl: false,
+                scaleControl: false,
+                streetViewControl: false,
+                rotateControl: false,
+                fullscreenControl:false,
+                zoom: 10,
+            });
+            // initialize services
+            const geocoder = new google.maps.Geocoder();
+            const service = new google.maps.DistanceMatrixService();
+         
+            // Instantiate a directions service.
+            const directionsService = new google.maps.DirectionsService();
+            // Create a renderer for directions and bind it to the map.
+            const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+            // Instantiate an info window to hold step text.
+            const stepDisplay = new google.maps.InfoWindow();
+            //==================================================================
+       
+            var temp_duration = 0;
+            var temp_distance = 0;
+            var testres;
+            service.getDistanceMatrix(
+                {
+                    origins: [origin],
+                    destinations: [destination],
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    unitSystem: google.maps.UnitSystem.METRIC,
+                    avoidHighways: false,
+                    avoidTolls: false,
+                }, function(response, status) {
+                        /*
+                        1. 沒有成功回傳狀態
+                        2. 沒有輸入目的地 
+                        3. 沒有輸入出發地
+                        */  
+                        if (status !== google.maps.DistanceMatrixStatus.OK || !checkCallCarServiceData(origin)  || destination == "") 
+                        {        
+                            convertAdressToLatLan(origin, function(locationData) {
+                                const map = new google.maps.Map(document.getElementById("map_canvas"), {
+                                    center: locationData,
+                                    disableDefaultUI: false,
+                                    zoomControl: false,
+                                    mapTypeControl: false,
+                                    scaleControl: false,
+                                    streetViewControl: false,
+                                    rotateControl: false,
+                                    fullscreenControl:false,
+                                    zoom: 15,
+                                });
+                                // 放置marker
+                                let marker = new google.maps.Marker({
+                                    position: locationData,
+                                    map: map
+                                });
+                            })
+                           
+                            testres= {"duration":"-","distance":"-","originAddresse":origin,"originAddresse":origin,"destinationAddresse":""};
+                        } 
+                        else 
+                        {
+                            var originList = response.originAddresses;
+                            var destinationList = response.destinationAddresses;
+                           
+                            ResponseResultJson = JSON.stringify(response,null,2);
+                            // Converting JSON-encoded string to JS object
+                            var obj = JSON.parse(ResponseResultJson);
+                            console
+                            console.log(obj["rows"][0]["elements"][0]["distance"]["text"]);
+                            console.log(obj["rows"][0]["elements"][0]["duration"]["text"]);
+                            temp_duration = obj["rows"][0]["elements"][0]["duration"]["text"];
+                            temp_distance = obj["rows"][0]["elements"][0]["distance"]["text"];
+                            testres= {"duration":temp_duration,"distance":temp_distance,"originAddresse":originList[0],"destinationAddresse":destinationList[0]};
+                            calculateAndDisplayRoute(
+                                directionsRenderer,
+                                directionsService,
+                                markersArray,
+                                stepDisplay,
+                                map,
+                                originList[0],
+                                destinationList[0]
+                            );
+                        
+                        }
+
+                        if(typeof ref_Callback_calcDistance === 'function'){
+                                //calling the callback function
+                                ref_Callback_calcDistance(testres)
+                        }
+                    }
+                );
+        }
+
+        function calculateAndDisplayRoute(
+            directionsRenderer,
+            directionsService,
+            markersArray,
+            stepDisplay,
+            map,
+            origins,
+            destinations
+         ) {
+         // First, remove any existing markers from the map.
+         deleteMarkers(markersArray);
+
+         // Retrieve the start and end locations and create a DirectionsRequest using
+         // WALKING directions.
+         directionsService
+            .route({
+               origin: origins,
+               destination: destinations,
+               travelMode: google.maps.TravelMode.DRIVING,
+            })
+            .then((result) => {
+
+               directionsRenderer.setDirections(result);
+
+            })
+            .catch((e) => {
+               window.alert("Directions request failed due to " + e);
+            });
+        }
+        //共用顯示
+        function Callback_calcDistance(testres) {
+            console.log(testres);
+            //testres= {"duration":temp_duration,"distance":temp_distance,"originAddresse":originList[0],"destinationAddresse":destinationList[0]};
+           
+            
+            document.getElementById("orderDetailInfo").innerHTML = 
+                
+                "<table class='table'>"+
+                "<tbody>"+
+                "<tr><td>目前時間</td><td>"+getNowTime()+"</td></tr>"+
+                "<tr><td>出發站</td><td>"+testres["originAddresse"]+"</td></tr>"+
+                "<tr><td>目的站</td><td>"+testres["destinationAddresse"]+"</td></tr>"+
+                "<tr><td>預估車程距離</td><td>"+testres["distance"]+"</td></tr>"+
+                "<tr><td>預計車程時間</td><td>"+testres["duration"]+"</td></tr>"+
+                "<tr><td>備註留言</td><td>"+document.getElementById("form_message").value+"</td></tr>"+
+                "<tr><td>叫車模式</td><td>"+$('.nav .active').text().trim()+" "+getCarMode()+"</td></tr>"+"</tbody>"+"</table>";
+            //Step2 : 創建表單
+            callCreatePairCallCar(
+                "Ue8d29d258a3250cdcac045c1094fd478",
+                "0",
+                testres["originAddresse"],
+                testres["destinationAddresse"],
+                document.getElementById('time').innerHTML,
+                document.getElementById("form_message").value,
+                getCarMode1())
+        }
+
+        function isSelectItem(){
+            const val3 = $('.nav .active').text().trim();
+            console.log(val3);
+            if( val3=="預約叫車" ) {
+                if(document.getElementById("ccmonth").value == "") {
+                    toastr['warning']('尚未選擇預約時間', '失敗');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function getCarMode1(){
+            const val3 = $('.nav .active').text().trim();
+            if(val3=="預約叫車")
+                return document.getElementById("ccmonth").value;
+            return  val3;
+        }
+
+        function getCarMode(){
+            const val3 = $('.nav .active').text().trim();
+            //console.log(val3);
+            str = "";
+            if(val3=="即時叫車")
+                str =  " ";
+            else
+                str =  document.getElementById("ccmonth").value;
+            return str;
+        }
+
+
+        function callCreatePairCallCar(passing_id,pair_status_id,from_location,to_location,create_pair_time,ride_desc,pair_time_type){
+            console.log("使用者 :"+passing_id);
+            console.log("出發站 :"+from_location);
+            console.log("目的站 :"+to_location);
+            console.log("備註留言 :"+ride_desc);
+            console.log("建立時間 :"+create_pair_time);
+            console.log("叫車模式 :"+pair_time_type);
+         
+            /*
+                {
+                    "passing_id" : "Ue8d29d258a3250cdcac045c1094fd478",
+                    "pair_status_id" : "0",
+                    "from_location":"鳳山國中",
+                    "to_location":"鳳山醫院",
+                    "create_pair_time":"14:56:22",
+                    "ride_desc":"",
+                    "pair_time_type":"預約5分鐘"
+                }
+            */
+
+             // create post json data
+             
+             var dataJSON = {
+                "passing_id" : passing_id,
+                    "pair_status_id" : pair_status_id,
+                    "from_location":from_location,
+                    "to_location":to_location,
+                    "create_pair_time":create_pair_time,
+                    "ride_desc":ride_desc,
+                    "pair_time_type":pair_time_type
+                    };
+                console.log(dataJSON);
+                // post add common address to db
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: 'http://localhost:5000/createPairCallCar',
+                    data: JSON.stringify(dataJSON),
+                    contentType: "application/json;charset=utf-8",
+                    success: function(res){ 
+                        
+                       
+           
+                        setTimeout(myAlert, 5000);
+                        toastr['success']('成功建立訂單，稍等系統配對司機', '成功');
+                       
+                    },
+                    error: function(){ 
+                        setTimeout(myAlert, 3000);
+                        console.log('error');
+                    }
+                })
+                //var modal = new bootstrap.Modal(document.querySelector('#carPairingModal'));
+                //        modal.hide();
+        }
+
+        function myAlert() {
+            document.getElementById("autocomplete").value = ""; 
+            document.getElementById("autocomplete2").value = "";
+            $("#cancelCar" ).trigger( "click" );
+        }
+
+        function getOnlyMinsValue(reserveDesc)  {
+            const Mins = reserveDesc.split(' ');
+            return Mins[0];
+        }
+
+        //刪除所有 Markers
+        function deleteMarkers(markersArray) {
+            for (let i = 0; i < markersArray.length; i++) {
+                markersArray[i].setMap(null);
+            }
+            markersArray = [];
+         }
+         //為每個 Marker 新增註解
+         function attachInstructionText(stepDisplay, marker, text, map) {
+            google.maps.event.addListener(marker, "click", () => {
+                // Open an info window when the marker is clicked on, containing the text
+                // of the step.
+                stepDisplay.setContent(text);
+                stepDisplay.open(map, marker);
+            });
+         }
+
+         function getNowTime(){
+          
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            // add a zero in front of numbers<10
+            m = checkTime(m);
+            s = checkTime(s);
+          
+            return  h + ":" + m + ":" + s;
+          
+         }
+
+           //show map on modal
+        $('#carPairingModal').on('shown.bs.modal', function () {
+            const formLocation = document.getElementById('autocomplete').value;
+            const toLocation = document.getElementById('autocomplete2').value;
+            console.log(formLocation);
+            console.log(toLocation);
+            calcDistance(formLocation,toLocation,Callback_calcDistance);
+           
+        });
+
+        //calling the calcDistance function and passing callback function reference
+        //calcDistance("","",Callback_calcDistance);
+    </script>
+    <!-- javascript end -->
 </html>
